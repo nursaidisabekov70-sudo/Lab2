@@ -2,14 +2,16 @@
 SELECT * FROM Faculties 
 WHERE max_students > 200 AND activity_type IN ('IT', 'Строительство', 'Химия');
 
--- 2. Выбрать группы, обучающиеся на факультете теоретической физики, максимальное количество человек в которых больше 20. (В нашем случае взят ИТ-факультет)
+-- 2. Выбрать группы, обучающиеся на факультете теоретической физики, максимальное количество человек в которых больше 20.
 SELECT Groups.* 
 FROM Groups
 JOIN Faculties ON Groups.faculty_code = Faculties.faculty_code
-WHERE Faculties.faculty_name = 'Факультет информационных технологий' 
+WHERE Faculties.faculty_name = 'Факультет теоретической физики' 
   AND Groups.max_people > 20;
 
 -- 3. Создать таблицу, содержащую данные 1 запроса и номера групп, относящихся к этим факультетам.
+DROP TABLE IF EXISTS Tech_Faculties_Groups;
+
 CREATE TABLE Tech_Faculties_Groups (
     faculty_code INT,
     faculty_name VARCHAR(100),
@@ -37,8 +39,8 @@ WHERE faculty_code IN (SELECT faculty_code FROM Faculties WHERE activity_type IN
 
 -- 6. Удалить из созданной таблицы все записи для групп, у которых отсутствует куратор.
 DELETE FROM Tech_Faculties_Groups
-WHERE group_number IN (
-    SELECT group_number FROM Groups WHERE curator IS NULL
+WHERE REPLACE(group_number, 'Т', '') IN (
+    SELECT REPLACE(group_number, 'Т', '') FROM Groups WHERE curator IS NULL
 );
 
 -- 7. Посчитать количество групп и максимально возможное количество студентов на каждом факультете.
