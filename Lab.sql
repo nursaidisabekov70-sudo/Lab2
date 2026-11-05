@@ -13,7 +13,9 @@ WHERE f.faculty_name = 'Факультет теоретической физик
 
 
 -- Задание 3. Создать таблицу, содержащую данные 1 запроса и номера групп, относящихся к этим факультетам.
-SELECT f.*, g.group_number
+DROP TABLE IF EXISTS tech_faculties_groups;
+
+SELECT f.faculty_code, f.faculty_name, f.max_students, f.activity_type, g.group_number
 INTO tech_faculties_groups
 FROM faculties f
 JOIN groups g ON f.faculty_code = g.faculty_code
@@ -37,9 +39,13 @@ WHERE activity_type != 'Гуманитарные науки';
 -- Задание 6. Удалить из созданной таблицы все записи для групп, у которых отсутствует куратор.
 DELETE FROM tech_faculties_groups
 WHERE group_number IN (
-    SELECT group_number FROM groups WHERE curator IS NULL
+    SELECT g.group_number 
+    FROM groups g 
+    WHERE g.curator IS NULL
 ) OR group_number IN (
-    SELECT 'Т' || SUBSTRING(group_number FROM 2) FROM groups WHERE curator IS NULL
+    SELECT 'Т' || SUBSTRING(g.group_number FROM 2) 
+    FROM groups g 
+    WHERE g.curator IS NULL
 );
 
 
