@@ -5,6 +5,7 @@ WHERE activity_type LIKE '%Технические%' AND max_students > 200;
 
 
 -- Задание 2. Выбрать группы, обучающиеся на факультете теоретической физики, 
+-- максимальное количество человек в которых больше 20.
 SELECT g.* 
 FROM groups g
 JOIN faculties f ON g.faculty_code = f.faculty_code
@@ -13,6 +14,9 @@ WHERE f.faculty_name = 'Факультет теоретической физик
 
 
 -- Задание 3. Создать таблицу, содержащую данные 1 запроса и номера групп.
+-- ВАЖНО: Добавляем DROP TABLE, чтобы при повторном запуске скрипта не было ошибки
+DROP TABLE IF EXISTS tech_faculties_groups;
+
 SELECT f.faculty_code, f.faculty_name, f.max_students, f.activity_type, g.group_number
 INTO tech_faculties_groups
 FROM faculties f
@@ -27,7 +31,7 @@ FROM faculties f
 JOIN groups g ON f.faculty_code = g.faculty_code
 WHERE g.max_people < 15
   AND NOT EXISTS (
-      -- Проверяем, нет ли уже такой группы в нашей новой таблице
+      -- Проверяем, нет ли уже такой группы в нашей новой таблице (защита от дублей)
       SELECT 1 
       FROM tech_faculties_groups t 
       WHERE t.group_number = g.group_number
@@ -35,6 +39,7 @@ WHERE g.max_people < 15
 
 
 -- Задание 5. У всех групп, относящихся к техническим факультетам, 
+-- изменить первую букву на «Т».
 UPDATE tech_faculties_groups
 SET group_number = CONCAT('Т', SUBSTRING(group_number, 2))
 WHERE activity_type LIKE '%Технические%';
